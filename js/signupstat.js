@@ -45,7 +45,7 @@
                 tableData.push({
                     "clientId": feat[i].clientId,
                     "clientType": feat[i].properties.clientType,
-                    "signupCountry": feat[i].properties.,
+                    "signupCountry": feat[i].properties.signupCountry,
                     "signupDate": feat[i].properties.signupDate,
                     "email": feat[i].properties.email
                 });
