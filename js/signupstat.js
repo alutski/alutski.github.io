@@ -9,6 +9,16 @@
         apiUrl: 'API_URL'
     };
 
+    function buildBaseAuth(account, username, password) {
+        var token = username + ':' + password;
+        var hash = btoa(token);
+
+        basicAuth = "Basic " + hash;
+        console.log(basicAuth);
+
+        return basicAuth;
+    }
+
     // Called when web page first loads
     // Create event listeners for when the user submits the form
     $(document).ready(function() {
@@ -68,23 +78,46 @@
 
     // Download the data
     myConnector.getData = function(table, doneCallback) {
-        $.getJSON("", function(resp) {
-            var feat = resp.features,
-                tableData = [];
+        // Create basicAuth token
+        var basicAuth = buildBaseAuth(config.user, config.password);
+        console.log("Basic auth token created.");
 
-            // Iterate over the JSON object
-            for (var i = 0, len = feat.length; i < len; i++) {
-                tableData.push({
-                    "clientId": feat[i].clientId,
-                    "clientType": feat[i].properties.clientType,
-                    "signupCountry": feat[i].properties.signupCountry,
-                    "signupDate": feat[i].properties.signupDate,
-                    "email": feat[i].properties.email
-                });
+        var xhr = $.ajax({
+            type: 'GET',
+            url: connectionURL,
+            dataType: 'json',
+            headers: {'Authorization': basicAuth},
+            success: function (resp, status, xhr) {
+                if (resp.data) {
+                    var feat = resp.features,
+                        tableData = [];
+
+                    // Iterate over the JSON object
+                    for (var i = 0, len = feat.length; i < len; i++) {
+                        tableData.push({
+                            "clientId": feat[i].clientId,
+                            "clientType": feat[i].properties.clientType,
+                            "signupCountry": feat[i].properties.signupCountry,
+                            "signupDate": feat[i].properties.signupDate,
+                            "email": feat[i].properties.email
+                        });
+                    }
+
+                    table.appendRows(tableData);
+                    doneCallback();
+
+
+
+                } else {
+                    console.log("No results found.");
+                    tableau.abortWithError("No results found.");
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log("Error while trying to connect to the data source.");
+                tableau.log("Connection error: " + xhr.responseText + "\n" + thrownError);
+                tableau.abortWithError("Error while trying to connect to the data source.");
             }
-
-            table.appendRows(tableData);
-            doneCallback();
         });
     };
 
