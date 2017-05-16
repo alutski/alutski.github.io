@@ -84,7 +84,7 @@
 
         var xhr = $.ajax({
             type: 'GET',
-            url: connectionURL,
+            url: config.apiUrl,
             dataType: 'json',
             headers: {'Authorization': basicAuth},
             success: function (resp, status, xhr) {
