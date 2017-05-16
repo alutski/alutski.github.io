@@ -1,18 +1,37 @@
 (function() {
+
+    // Get our config info (credentials)
+    var config = require('./config.js');
+
+    // Called when web page first loads
+    // Create event listeners for when the user submits the form
+    $(document).ready(function() {
+        console.log(config.USER);
+        console.log(config.PASSWORD);
+
+
+        $("#submitButton").click(function() {
+            tableau.connectionName = "Signup Stat"; // This will be the data source name in Tableau
+            tableau.submit(); // This sends the connector object to Tableau
+        });
+    });
+
+    //------------- Tableau WDC code -------------//
     // Create the connector object
     var myConnector = tableau.makeConnector();
-    
+
     // Init function for connector, called during every phase but
     // only called when running inside the simulator or tableau
     myConnector.init = function(initCallback) {
-      tableau.authType = tableau.authTypeEnum.custom;
-      initCallback();
+        tableau.authType = tableau.authTypeEnum.basic;
+        initCallback();
     }
 
     // Define the schema
     myConnector.getSchema = function(schemaCallback) {
         var cols = [{
             id: "clientId",
+            alias: "clientId",
             dataType: tableau.dataTypeEnum.string
         }, {
             id: "clientType",
@@ -64,12 +83,4 @@
     };
 
     tableau.registerConnector(myConnector);
-
-    // Create event listeners for when the user submits the form
-    $(document).ready(function() {
-        $("#submitButton").click(function() {
-            tableau.connectionName = "Signup Stat"; // This will be the data source name in Tableau
-            tableau.submit(); // This sends the connector object to Tableau
-        });
-    });
 })();
