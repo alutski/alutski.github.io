@@ -5,7 +5,7 @@
     // Storing these here is insecure for a public app. Done just for testing purpose
     var config = {
         user: 'USER',
-        password: 'PASSWORD'
+        password: 'PASSWORD',
         apiUrl: 'API_URL'
     };
 
