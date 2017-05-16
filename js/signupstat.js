@@ -1,14 +1,20 @@
 (function() {
 
     // Get our config info (credentials)
-    var config = require('./config.js');
+    //var config = require('./config.js');
+    // Storing these here is insecure for a public app. Done just for testing purpose
+    var config = {
+        user: 'USER',
+        password: 'PASSWORD'
+        apiUrl: 'API_URL'
+    };
 
     // Called when web page first loads
     // Create event listeners for when the user submits the form
     $(document).ready(function() {
-        console.log(config.USER);
-        console.log(config.PASSWORD);
-
+        console.log(config.user);
+        console.log(config.password);
+        console.log(config.apiUrl);
 
         $("#submitButton").click(function() {
             tableau.connectionName = "Signup Stat"; // This will be the data source name in Tableau

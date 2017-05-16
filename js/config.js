@@ -1,4 +1,5 @@
 module.exports = {
- 'USER': 'user',
- 'PASSWORD': 'password'
+ 'user': 'USER',
+ 'password': 'PASSWORD',
+ 'apiUrl': 'API_URL' 
 };
