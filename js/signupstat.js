@@ -82,23 +82,42 @@
         var basicAuth = buildBaseAuth(config.user, config.password);
         console.log("Basic auth token created.");
 
-        $.getJSON("", function(resp) {
-            var feat = resp.features,
-                tableData = [];
+        var xhr = $.ajax({
+            type: 'GET',
+            url: config.apiUrl,
+            dataType: 'json',
+            headers: {'Authorization': basicAuth},
+            success: function (resp, status, xhr) {
+                if (resp.data) {
+                    var feat = resp.features,
+                        tableData = [];
 
-            // Iterate over the JSON object
-            for (var i = 0, len = feat.length; i < len; i++) {
-                tableData.push({
-                    "clientId": feat[i].clientId,
-                    "clientType": feat[i].properties.clientType,
-                    "signupCountry": feat[i].properties.signupCountry,
-                    "signupDate": feat[i].properties.signupDate,
-                    "email": feat[i].properties.email
-                });
+                    // Iterate over the JSON object
+                    for (var i = 0, len = feat.length; i < len; i++) {
+                        tableData.push({
+                            "clientId": feat[i].clientId,
+                            "clientType": feat[i].properties.clientType,
+                            "signupCountry": feat[i].properties.signupCountry,
+                            "signupDate": feat[i].properties.signupDate,
+                            "email": feat[i].properties.email
+                        });
+                    }
+
+                    table.appendRows(tableData);
+                    doneCallback();
+
+
+
+                } else {
+                    console.log("No results found.");
+                    tableau.abortWithError("No results found.");
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log("Error while trying to connect to the data source.");
+                tableau.log("Connection error: " + xhr.responseText + "\n" + thrownError);
+                tableau.abortWithError("Error while trying to connect to the data source.");
             }
-
-            table.appendRows(tableData);
-            doneCallback();
         });
 
 
