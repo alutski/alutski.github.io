@@ -6,7 +6,7 @@
     var config = {
         user: 'USER',
         password: 'PASSWORD',
-        apiUrl: 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson'
+        apiUrl: 'API_URL'
     };
 
     function buildBaseAuth(account, username, password) {
@@ -43,36 +43,33 @@
         initCallback();
     }
 
-// Define the schema
+    // Define the schema
     myConnector.getSchema = function(schemaCallback) {
         var cols = [{
-            id: "id",
+            id: "clientId",
+            alias: "clientId",
             dataType: tableau.dataTypeEnum.string
         }, {
-            id: "mag",
+            id: "clientType",
             alias: "magnitude",
-            dataType: tableau.dataTypeEnum.float
-        }, {
-            id: "title",
-            alias: "title",
             dataType: tableau.dataTypeEnum.string
         }, {
-            id: "lat",
-            alias: "latitude",
-            columnRole: "dimension",
-            // Do not aggregate values as measures in Tableau--makes it easier to add to a map
-            dataType: tableau.dataTypeEnum.float
+            id: "signupCountry",
+            alias: "signupCountry",
+            dataType: tableau.dataTypeEnum.string
         }, {
-            id: "lon",
-            alias: "longitude",
-            columnRole: "dimension",
-            // Do not aggregate values as measures in Tableau--makes it easier to add to a map
-            dataType: tableau.dataTypeEnum.float
+            id: "signupDate",
+            alias: "signupDate",
+            dataType: tableau.dataTypeEnum.date
+        }, {
+            id: "email",
+            alias: "email",
+            dataType: tableau.dataTypeEnum.string
         }];
 
         var tableSchema = {
-            id: "earthquakeFeed",
-            alias: "Earthquakes with magnitude greater than 4.5 in the last seven days",
+            id: "signupStat",
+            alias: "signup Stat",
             columns: cols
         };
 
@@ -81,23 +78,46 @@
 
     // Download the data
     myConnector.getData = function(table, doneCallback) {
-        $.getJSON(config.apiUrl, function(resp) {
-            var feat = resp.features,
-                tableData = [];
+        // Create basicAuth token
+        var basicAuth = buildBaseAuth(config.user, config.password);
+        console.log("Basic auth token created.");
 
-            // Iterate over the JSON object
-            for (var i = 0, len = feat.length; i < len; i++) {
-                tableData.push({
-                    "id": feat[i].id,
-                    "mag": feat[i].properties.mag,
-                    "title": feat[i].properties.title,
-                    "lon": feat[i].geometry.coordinates[0],
-                    "lat": feat[i].geometry.coordinates[1]
-                });
+        var xhr = $.ajax({
+            type: 'GET',
+            url: config.apiUrl,
+            dataType: 'json',
+            headers: {'Authorization': basicAuth},
+            success: function (resp, status, xhr) {
+                if (resp.data) {
+                    var feat = resp.features,
+                        tableData = [];
+
+                    // Iterate over the JSON object
+                    for (var i = 0, len = feat.length; i < len; i++) {
+                        tableData.push({
+                            "clientId": feat[i].clientId,
+                            "clientType": feat[i].properties.clientType,
+                            "signupCountry": feat[i].properties.signupCountry,
+                            "signupDate": feat[i].properties.signupDate,
+                            "email": feat[i].properties.email
+                        });
+                    }
+
+                    table.appendRows(tableData);
+                    doneCallback();
+
+
+
+                } else {
+                    console.log("No results found.");
+                    tableau.abortWithError("No results found.");
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log("Error while trying to connect to the data source.");
+                tableau.log("Connection error: " + xhr.responseText + "\n" + thrownError);
+                tableau.abortWithError("Error while trying to connect to the data source.");
             }
-
-            table.appendRows(tableData);
-            doneCallback();
         });
     };
 
