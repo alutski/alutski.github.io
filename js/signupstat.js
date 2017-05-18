@@ -81,7 +81,7 @@
 
     // Download the data
     myConnector.getData = function(table, doneCallback) {
-        $.getJSON(apiUrl, function(resp) {
+        $.getJSON(config.apiUrl, function(resp) {
             var feat = resp.features,
                 tableData = [];
 
