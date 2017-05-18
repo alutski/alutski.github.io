@@ -81,49 +81,24 @@
 
     // Download the data
     myConnector.getData = function(table, doneCallback) {
-        // Create basicAuth token
-        var basicAuth = buildBaseAuth(config.user, config.password);
-        console.log("Basic auth token created.");
+        $.getJSON(apiUrl, function(resp) {
+            var feat = resp.features,
+                tableData = [];
 
-        var xhr = $.ajax({
-            type: 'GET',
-            url: config.apiUrl,
-            dataType: 'json',
-            success: function (resp, status, xhr) {
-                if (resp.data) {
-                    var feat = resp.features,
-                        tableData = [];
-
-                    // Iterate over the JSON object
-                    for (var i = 0, len = feat.length; i < len; i++) {
-                        tableData.push({
-                            "id": feat[i].id,
-                            "mag": feat[i].properties.mag,
-                            "title": feat[i].properties.title,
-                            "lon": feat[i].geometry.coordinates[0],
-                            "lat": feat[i].geometry.coordinates[1]
-                        });
-                    }
-
-                    table.appendRows(tableData);
-                    doneCallback();
-
-
-
-                } else {
-                    console.log("No results found.");
-                    tableau.abortWithError("No results found.");
-                }
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                console.log("Error while trying to connect to the data source.");
-                tableau.log("Connection error: " + xhr.responseText + "\n" + thrownError);
-                tableau.abortWithError("Error while trying to connect to the data source.");
+            // Iterate over the JSON object
+            for (var i = 0, len = feat.length; i < len; i++) {
+                tableData.push({
+                    "id": feat[i].id,
+                    "mag": feat[i].properties.mag,
+                    "title": feat[i].properties.title,
+                    "lon": feat[i].geometry.coordinates[0],
+                    "lat": feat[i].geometry.coordinates[1]
+                });
             }
+
+            table.appendRows(tableData);
+            doneCallback();
         });
-
-
-
     };
 
     tableau.registerConnector(myConnector);
