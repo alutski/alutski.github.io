@@ -1,7 +1,10 @@
 (function() {
 
     // Get our config info (credentials)
-    var config = require('./config.json');
+    // var config = require('./config.json');
+	var config = {
+		apiUrl : 'https://web.dev.pritle.com/backend/pritle-wdc/api/V1/data/signup' 
+	};	
     
     function buildBaseAuth(username, password) {
         var token = username + ':' + password;
@@ -21,6 +24,8 @@
         console.log(config.apiUrl);
 
         $("#submitButton").click(function() {
+			tableau.username = $('#username').val().trim(); 
+			tableau.password = $('#password').val().trim()
             tableau.connectionName = "Signup Stat"; // This will be the data source name in Tableau
             tableau.submit(); // This sends the connector object to Tableau
         });
@@ -65,7 +70,7 @@
     // Download the data
     myConnector.getData = function(table, doneCallback) {
         // Create basicAuth token
-        var basicAuth = buildBaseAuth(config.user, config.password);
+        var basicAuth = buildBaseAuth(tableau.user, tableau.password);
         console.log("Basic auth token created.");
 
         var xhr = $.ajax({
