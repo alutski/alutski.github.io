@@ -9,7 +9,7 @@
         apiUrl: 'API_URL'
     };
 
-    function buildBaseAuth(account, username, password) {
+    function buildBaseAuth(username, password) {
         var token = username + ':' + password;
         var hash = btoa(token);
 
