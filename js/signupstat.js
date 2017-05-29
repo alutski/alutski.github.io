@@ -1,14 +1,8 @@
 (function() {
 
     // Get our config info (credentials)
-    //var config = require('./config.js');
-    // Storing these here is insecure for a public app. Done just for testing purpose
-    var config = {
-        user: 'USER',
-        password: 'PASSWORD',
-        apiUrl: 'API_URL'
-    };
-
+    var config = require('./config.json');
+    
     function buildBaseAuth(username, password) {
         var token = username + ':' + password;
         var hash = btoa(token);
