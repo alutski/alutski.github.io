@@ -70,7 +70,7 @@
     // Download the data
     myConnector.getData = function(table, doneCallback) {
         // Create basicAuth token
-        var basicAuth = buildBaseAuth(tableau.user, tableau.password);
+        var basicAuth = buildBaseAuth(tableau.username, tableau.password);
         console.log("Basic auth token created.");
 
         var xhr = $.ajax({
