@@ -46,16 +46,8 @@
     // Define the schema
     myConnector.getSchema = function(schemaCallback) {
         var cols = [{
-            id: "clientId",
-            alias: "clientId",
-            dataType: tableau.dataTypeEnum.string
-        }, {
-            id: "clientType",
-            alias: "magnitude",
-            dataType: tableau.dataTypeEnum.string
-        }, {
-            id: "signupCountry",
-            alias: "signupCountry",
+            id: "clientID",
+            alias: "clientID",
             dataType: tableau.dataTypeEnum.string
         }, {
             id: "signupDate",
@@ -88,18 +80,15 @@
             dataType: 'json',
             headers: {'Authorization': basicAuth},
             success: function (resp, status, xhr) {
-                if (resp.data) {
-                    var feat = resp.features,
-                        tableData = [];
+                if (resp) {
+                    var tableData = [];
 
                     // Iterate over the JSON object
-                    for (var i = 0, len = feat.length; i < len; i++) {
+                    for (var i = 0, len = resp.length; i < len; i++) {
                         tableData.push({
-                            "clientId": feat[i].clientId,
-                            "clientType": feat[i].properties.clientType,
-                            "signupCountry": feat[i].properties.signupCountry,
-                            "signupDate": feat[i].properties.signupDate,
-                            "email": feat[i].properties.email
+                            "clientID": resp[i].clientID,
+                            "signupDate": resp[i].signupDate,
+                            "email": resp[i].email
                         });
                     }
 
