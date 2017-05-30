@@ -75,7 +75,7 @@
         console.log("Basic auth token created.");
 		var url = config.apiUrl;
 		if (table.incrementValue) {
-			url = url + "?lastKnownClientId=" + table.incrementValue;
+			url = url + "?latestKnownClientId=" + table.incrementValue;
 		}
 
         var xhr = $.ajax({
