@@ -73,10 +73,14 @@
         // Create basicAuth token
         var basicAuth = buildBaseAuth(tableau.username, tableau.password);
         console.log("Basic auth token created.");
+		var url = config.apiUrl;
+		if (table.incrementValue) {
+			url = url + "?lastKnownClientId=" + table.incrementValue;
+		}
 
         var xhr = $.ajax({
             type: 'GET',
-            url: config.apiUrl,
+            url: url,
             dataType: 'json',
             headers: {'Authorization': basicAuth},
             success: function (resp, status, xhr) {
@@ -94,9 +98,6 @@
 
                     table.appendRows(tableData);
                     doneCallback();
-
-
-
                 } else {
                     console.log("No results found.");
                     tableau.abortWithError("No results found.");
