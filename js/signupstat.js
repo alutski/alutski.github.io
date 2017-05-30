@@ -61,7 +61,8 @@
         var tableSchema = {
             id: "signupStat",
             alias: "signup Stat",
-            columns: cols
+            columns: cols,
+			incrementColumnId: "clientID"
         };
 
         schemaCallback([tableSchema]);
